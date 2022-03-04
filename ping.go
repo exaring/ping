@@ -521,8 +521,9 @@ func (p *Pinger) runLoop(
 		case r := <-recvCh:
 			err := p.processPacket(r)
 			if err != nil {
-				// FIXME: this logs as FATAL but continues
 				logger.Fatalf("processing received packet: %s", err)
+
+				return fmt.Errorf("processing received packet: %w", err)
 			}
 
 		case <-interval.C:
@@ -532,8 +533,9 @@ func (p *Pinger) runLoop(
 			}
 			err := p.sendICMP(conn)
 			if err != nil {
-				// FIXME: this logs as FATAL but continues
 				logger.Fatalf("sending packet: %s", err)
+
+				return fmt.Errorf("sending packet: %w", err)
 			}
 
 		case <-intervalLostPacketsCheck:
